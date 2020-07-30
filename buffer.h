@@ -9,7 +9,7 @@ struct buffer { /*char sequence to render the screen*/
   char* contents;
   int length;
   int capacity;
-}
+};
 
 struct buffer* bufferCreate();
 
