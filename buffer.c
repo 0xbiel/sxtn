@@ -17,7 +17,7 @@ struct buffer* bufferCreate() {
   }
 
   else {
-    printf("couldn't allocate buffer size.");
+    printf("Error: Could not allocate the buffer size.");
 
     exit(1);
   }
@@ -34,11 +34,10 @@ void bufferApp(struct buffer* bf, const char* file, size_t length) {
   if((int)(bf -> length + length) >= bf -> capacity) {
     bf -> capacity += length;
     bf -> capacity *= 2;
-
     bf -> contents = realloc(bf -> contents, bf -> capacity);
 
     if(bf -> contents == NULL) {
-      printf("couldn't reallocation the buffer.");
+      printf("Error: Could not reallocate the buffer.");
       exit(1);
     }
   }
@@ -49,10 +48,9 @@ void bufferApp(struct buffer* bf, const char* file, size_t length) {
 
 int bufferAppf(struct buffer* bf, const char* file, ...) {
   assert(strlen(file) < BUFFER_SIZE);
-
   char buffer[BUFFER_SIZE];
-
   va_list append;
+
   va_start(append, file);
 
   int length = vsnprintf(buffer, sizeof(buffer), file, append);
@@ -64,7 +62,7 @@ int bufferAppf(struct buffer* bf, const char* file, ...) {
 
 void bufferWrite(struct buffer* bf) {
   if(write(STDOUT_FILENO, bf -> contents, bf -> length) == - 1) {
-    printf("couldn't write the buffer.");
+    printf("Error: Could not write the buffer.");
     exit(1);
   }
 }
