@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2021 Biel A. P. - 0xbiel <biel@ugly.cat>
+ * Author: Biel A. P. - 0xbiel <biel@ugly.cat>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef EDITOR_H
 #define EDITOR_H
 #define INPUT_SIZE 80
@@ -5,7 +23,8 @@
 #include <stdbool.h>
 #include "buffer.h"
 
-enum editmode {
+enum editmode 
+{
   APPEND      =     0x001,    /*append text after cursor.*/
   APPENDCURR  =     0x002,    /*append text after current cursor position.*/
   NORMAL      =     0x004,    /*normal mode...*/
@@ -16,18 +35,21 @@ enum editmode {
   SEARCH      =     0x100,    /*searh mode like ctrl+f on browsers.*/
 };
 
-enum searchdir {
+enum searchdir 
+{
   FWD,
   BCKWD,
 };
 
-enum status {
+enum status 
+{
   INFO,     /*blue bg.*/
   ERROR,    /*red bg.*/
   WARNING,  /*yellow bg.*/
 };
 
-struct editor {
+struct editor 
+{
   int           bpl;          /*bytes per line.*/
   int           bpg;          /*bytes per group.*/
   int           cx;           /*cursor x.*/
