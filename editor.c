@@ -19,9 +19,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 #include "editor.h"
 
-void editorNewFile(struct *editor ed, const char* fn) {
+void 
+editorNewFile(struct *editor ed, const char* fn) 
+{
   ed -> fn = malloc(strlen(fn) + 1); 
   strncpy(ed -> fn, fn, strlen(fn) + 1);
   ed -> contents = malloc(0);
@@ -29,3 +32,20 @@ void editorNewFile(struct *editor ed, const char* fn) {
 }
 
 //@@@TODO: editorOpenFile() function.
+void 
+editorOpenFile(struct *editor ed, const char* fn) 
+{
+  FILE* filePath = fopen(fn, "rb"); /*opens the given file in read and binary mode "rb"*/
+
+  if(filePath == NULL)
+  {
+    if(errno == ENOENT)
+    {
+      editorNewFile(ed, fn);
+      return;
+    }
+
+    printf("Error: Could not open file.");
+    exit(1);
+  }
+}
