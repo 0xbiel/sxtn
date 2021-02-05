@@ -31,7 +31,6 @@ editorNewFile(struct *editor ed, const char* fn)
   ed -> clength = 0; 
 }
 
-//@@@TODO: editorOpenFile() function.
 void 
 editorOpenFile(struct *editor ed, const char* fn) 
 {
@@ -47,5 +46,68 @@ editorOpenFile(struct *editor ed, const char* fn)
 
     printf("Error: Could not open file.");
     exit(1);
+
+    struct stat statBuffer; /*get file info through 'stat()'.*/
+    if(stat(fn, &statBuffer) == -1)
+    {
+      printf("Error: Could not get file information.");
+      exit(1);
+    }
+
+    /*check if the file is regular.*/
+    if(!S_ISREG(statBuffer.st_mode))
+    {
+      fprintf(stderr, "Error: File %s is not a regular file\n", fn);
+      exit(1);
+    }
+
+    char *contents;
+    int contentLength = 0;
+
+    if(statBuffer.st_size <= 0)
+    {
+      struct charBuffer *buffer = createCharBuffer()
+      int c;
+      char tempBuffer[1];
+      while((c = fgetc(filePath)) != EOF)
+      {
+        tempBuffer[0] = (char) c;
+        appendCharBuffer(buffer, tempBuffer, 1);
+      }
+      contents = buffer -> contents;
+      contentLength = buffer -> len;
+    }
+    else
+    {
+      contents = malloc(sizeof(char) * statBuffer.st_size);
+      contentLength = statBuffer.st_size;
+
+      if(fread(contents, 1, statBuffer.st_size, filePath) < (size_t) statBuffer.st_size)
+      {
+        printf("Error: Unable to read file content.");
+        free(contents);
+        exit(1);
+      }
+    }
+
+    /*duplicate string.*/
+    ed -> fn = malloc(strlen(fn) + 1);
+    strncpy(ed -> fn, fn, strlen(fn) + 1);
+    ed -> contents = contents;
+    ed -> clength = contentLength;
+
+    /*check readonly file.*/
+    if(access(fn, W_OK) == -1)
+    {
+      editorStatus(ed, WARNING, "\"%s\" (%d bytes) [readonly]", ed -> fn, ed -> clength);
+    }
+    else
+    {
+      editorStatus(ed, INFO, "\"%s\" (%d bytes)", ed -> fn, ed -> clength);
+    }
+
+    fclose(filePath);
   }
 }
+
+//@@@TODO: editorWrite() function.
