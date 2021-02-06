@@ -34,7 +34,8 @@ editorNewFile(struct *editor ed, const char* fn)
 void 
 editorOpenFile(struct *editor ed, const char* fn) 
 {
-  FILE* filePath = fopen(fn, "rb"); /*opens the given file in read and binary mode "rb"*/
+  /*opens the given file in read and binary mode "rb".*/
+  FILE* filePath = fopen(fn, "rb");
 
   if(filePath == NULL)
   {
@@ -110,4 +111,30 @@ editorOpenFile(struct *editor ed, const char* fn)
   }
 }
 
-//@@@TODO: editorWrite() function.
+void
+editorWrite(struct editor *ed)
+{
+  assert(ed -> fn != NULL);
+
+  /*opens the given file in write and binary mode "wb".*/
+  FILE *filePath = fopen(ed -> fn, "wb")
+
+  if(filePath == NULL)
+  {
+    editorStatus(ed, ERROR, "Error: Could not open file: %s.", ed -> fn, strerror(errno));
+    return;
+  }
+
+  size_t writeBuffer = fwrite(ed -> contents, sizeof(char), ed -> clength, filePath);
+  if(writeBuffer <= 0)
+  {
+    statusMessage(ed, ERROR, "Error: Could not save file: %s", strerror(errno));
+    return;
+  }
+
+  statusMessage(ed, INFO, "\"%s\", %d bytes written.", ed -> fn, ed -> clength);
+  ed -> dirty = false;
+  fclose(filePath);
+}
+
+//@@@TODO: editorMoveCursor() function.
