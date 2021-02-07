@@ -137,4 +137,80 @@ editorWrite(struct editor *ed)
   fclose(filePath);
 }
 
-//@@@TODO: editorMoveCursor() function.
+void
+editorMoveCursor(struct editor *ed, int direction, int amount)
+{
+  switch(direction)
+  {
+    case UP:
+      ed -> cy -= amount;
+      break;
+    case DOWN:
+      ed -> cy += amount;
+      break;
+    case RIGHT:
+      ed -> cx += amount;
+      break;
+    case LEFT:
+      ed -> cx -= amount;
+      break;
+  }
+
+  /*if reaches the end of the scroll buffer, stops the scrolling. */
+  if(ed -> cx <= 1 && ed -> cy <= 1 && ed -> line <= 0)
+  {
+    ed -> cx = 1;
+    ed -> cy = 1;
+    return;
+  }
+
+  /*move cursor horizontally.*/
+  if(ed -> cx < 1)
+  {
+    if(ed -> cy >= 1)
+    {
+      ed -> cy--;
+      ed -> cx = ed -> bpl;
+    }
+  }
+
+  else if(ed -> cx > ed -> bpl)
+  {
+    ed -> cy++;
+    ed -> cx = 1;
+  }
+
+  /*if reaches the end of the scroll buffer, stops the scrolling. */
+  if(ed -> cy <= 1 && ed -> line <= 0)
+  {
+    ed -> cy = 1;
+  }
+
+  /*move cursor vertically.*/
+  if(ed -> cy > ed -> rows - 1)
+  {
+    ed -> cy = ed -> rows -1;
+    editorScroll(ed, 1);
+  }
+  else if(ed -> cy < 1 && ed -> line > 0)
+  {
+    ed -> cy = 1;
+    editorScroll(ed, -1);
+  }
+
+  unsigned int offset = editorCursorPos(ed);
+  if(offset >= ed -> clength - 1)
+  {
+    editorCursorPos(ed, offset, &ed -> cx, &ed -> cy);
+    return;
+  }
+}
+
+void
+editorCursorPos(struct editor *ed, int offset, int *x, int *y)
+{
+  *x = offset % ed -> bpl + 1;
+  *y = offset / ed -> bpl - ed -> line + 1;
+}
+
+//@@@TODO: editorDelAtCursor().
