@@ -213,4 +213,80 @@ editorCursorPos(struct editor *ed, int offset, int *x, int *y)
   *y = offset / ed -> bpl - ed -> line + 1;
 }
 
-//@@@TODO: editorDelAtCursor().
+void
+editorDelAtCursor(struct editor *ed)
+{
+  unsigned int offset = editorCursorPos(ed);
+  unsigned int oldLen = ed -> clength;
+
+  if(ed -> clength <= 0)
+  {
+    editorStatus(ed, WARNING, "Nothing to delete.");
+    return;
+  }
+
+  unsigned char charAt = ed -> contents[offset];
+  editorDelOffset(ed, offset);
+  ed -> dirty = true;
+
+  if(offset >= oldLen -1)
+  {
+    editorMoveCursor(ed, LEFT, 1);
+  }
+
+  addActionList(ed -> undoList, DELETE, offset, charAt);
+}
+
+void
+editorDelOffset(struct editor *ed, unsigned int offset)
+{
+  memmove(ed -> contents + offset, ed -> contents + offset + 1, ed -> clength - offset - 1);
+  ed -> contents = realloc(ed -> contents, ed -> clength - 1);
+  ed -> clength--;
+}
+
+void editorIncByte(struct editor *ed, int amount)
+{
+  unsigned int offset = editorCursorPos(ed);
+  unsigned char prev = ed -> contents[offset];
+  ed -> contents[offset] += amount;
+
+  addActionList(ed -> undoList, REPLACE, offset, prev);
+}
+
+inline int
+editorOffCursor(struct editor *ed)
+{
+  unsigned int offset = (ed -> cy - 1 + ed -> line) * ed -> bpl + (ed -> cx - 1);
+  if(offset <= 0)
+  {
+    return 0;
+  }
+
+  if(offset >= ed -> clength)
+  {
+    return ed -> clength - 1;
+  }
+
+  return offset;
+}
+
+void
+editorScroll(struct editor *ed, int amount)
+{
+  ed -> line += amount;
+
+  int uLimit = ed -> clength / ed -> bpl - ed (ed -> rows - 2);
+
+  if(ed -> line >= uLimit)
+  {
+    ed -> line = uLimit;
+  }
+
+  if(ed -> line <= 0)
+  {
+    ed -> line = 0;
+  }
+}
+
+//@@@ TODO: editorScrollOff().

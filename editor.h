@@ -73,7 +73,7 @@ struct editor
 struct  editor* editorInit();
 void    editorCursorPos(struct editor* ed, int pos, int* x, int* y);
 void    editorDelAtCursor(struct editor* ed);
-void    editorDelOffCursor(struct editor* ed, unsigned int position);
+void    editorDelOffset(struct editor* ed, unsigned int offset);
 void    editorFree(struct editor* ed);
 void    editorIncByte(struct editor* ed, int amount);
 void    editorInsByte(struct editor* ed, char x, bool after);
