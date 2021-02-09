@@ -18,7 +18,7 @@
 
 #ifndef EDITOR_H
 #define EDITOR_H
-#define INPUT_SIZE 80
+#define INPUTSIZE 80
 
 #include <stdbool.h>
 #include "buffer.h"
@@ -65,9 +65,9 @@ struct editor
   enum          status stts;  /*status*/
   char          sttmsg[120];  /*status message*/
   struct        act* undo;
-  char          ib[INPUT_SIZE];
+  char          ib[INPUTSIZE];
   int           ibindex;
-  char          srch[INPUT_SIZE];
+  char          srch[INPUTSIZE];
 };
 
 struct  editor* editorInit();

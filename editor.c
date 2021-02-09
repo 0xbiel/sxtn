@@ -289,4 +289,40 @@ editorScroll(struct editor *ed, int amount)
   }
 }
 
-//@@@ TODO: editorScrollOff().
+void
+editorScrollOff(struct editor *ed, unsigned int position)
+{
+  if(position > ed -> clength)
+  {
+    editorStatus(ed, ERROR, "Error: Out of range: 0x%09x (%u)", position, position);
+    return;
+  }
+
+  /*check if position is within the screen range.*/
+  unsigned int minPos = ed -> line * ed -> bpl;
+  unsigned int maxPos = minPos + (ed -> rows * ed -> bpl);
+
+  if(position >= minPos && position <= maxPos)
+  {
+    editorCursorPos(ed, position, &(ed -> cx), &(ed -> cy));    
+    return;
+  }
+
+  ed -> line = position / ed -> bpl - (ed -> rows / 2);
+
+  int uLimit = ed -> clength / ed -> bpl - (ed -> rows - 2);
+
+  if(ed -> line >= uLimit)
+  {
+    ed -> line = uLimit;
+  }
+
+  if(ed -> line <= 0)
+  {
+    ed -> line = 0;
+  }
+
+  editorCursorPos(ed, position, &(ed -> cx), &(ed -> cy));
+}
+
+//@@@ TODO: editorMode();
